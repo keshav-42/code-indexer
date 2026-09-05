@@ -1,0 +1,4 @@
+.env
+.vscode/
+go/main
+js/node_modules/

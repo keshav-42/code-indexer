@@ -1,0 +1,73 @@
+services:
+  go-analyzer:
+    build: ./go
+    env_file:
+      - .env
+    environment:
+      - ROOT_NAME=gsockeploy-pkg
+      - BASE_URL=http://localhost
+    volumes:
+      - D:\gsockeploy\pkg:/app
+    depends_on:
+      - neo4j
+
+  graphlang-analyzer:
+    platform: linux/amd64
+    build: ./graphlang
+    env_file:
+      - .env
+    environment:
+      - ROOT_NAME=graphlang-project
+      - BASE_URL=http://localhost
+    volumes:
+      - ./graphlang:/app
+    depends_on:
+      - neo4j
+
+  python-analyzer:
+    build: ./python
+    env_file:
+      - .env
+    environment:
+      - ROOT_NAME=python-project
+      - BASE_URL=http://localhost
+    volumes:
+      - ./python:/app
+    depends_on:
+      - neo4j
+
+  js-analyzer:
+    build: ./js
+    env_file:
+      - .env
+    environment:
+      - ROOT_NAME=js-project
+      - BASE_URL=http://localhost
+    volumes:
+      - ./js:/app
+    depends_on:
+      - neo4j
+
+  neo4j:
+    image: neo4j:enterprise
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      - NEO4J_AUTH=neo4j/myneo4jpass
+      - NEO4J_apoc_export_file_enabled=true
+      - NEO4J_apoc_import_file_enabled=true
+      - NEO4J_apoc_import_file_use__neo4j__config=true
+      - NEO4J_PLUGINS=["apoc", "graph-data-science", "bloom"]
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+      - neo4j_import:/import
+      - neo4j_plugins:/plugins
+
+volumes:
+  neo4j_data:
+  neo4j_logs:
+  neo4j_import:
+  neo4j_plugins:
